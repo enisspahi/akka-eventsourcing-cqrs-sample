@@ -1,0 +1,64 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'application'
+
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+def versions = [
+        ScalaBinary: "2.13"
+]
+
+dependencies {
+    implementation platform("com.typesafe.akka:akka-bom_${versions.ScalaBinary}:2.8.0")
+    implementation platform("com.lightbend.akka:akka-dependencies_${versions.ScalaBinary}:22.10.4")
+    implementation platform("com.typesafe.akka:akka-http-bom_${versions.ScalaBinary}:10.5.0")
+
+    implementation "com.typesafe.akka:akka-actor-typed_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-cluster-typed_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-stream_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-cluster-sharding-typed_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-serialization-jackson_${versions.ScalaBinary}"
+    implementation "com.lightbend.akka.management:akka-management-cluster-http_${versions.ScalaBinary}"
+    implementation "com.lightbend.akka.management:akka-management-cluster-bootstrap_${versions.ScalaBinary}"
+
+
+    implementation "com.typesafe.akka:akka-persistence-typed_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-persistence-query_${versions.ScalaBinary}"
+    implementation "com.lightbend.akka:akka-persistence-jdbc_${versions.ScalaBinary}"
+    implementation "com.lightbend.akka:akka-projection-core_${versions.ScalaBinary}"
+    implementation "com.lightbend.akka:akka-projection-eventsourced_${versions.ScalaBinary}"
+    implementation "com.lightbend.akka:akka-projection-jdbc_${versions.ScalaBinary}"
+
+    implementation 'org.postgresql:postgresql:42.2.18'
+
+    implementation "com.typesafe.akka:akka-http_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-http-jackson_${versions.ScalaBinary}"
+
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    testImplementation "com.typesafe.akka:akka-actor-testkit-typed_${versions.ScalaBinary}"
+    testImplementation 'junit:junit:4.13.1'
+}
+
+mainClassName = "de.openvalue.resilience.Main"
+
+run {
+    standardInput = System.in
+}
+sourceCompatibility = JavaVersion.VERSION_19
+targetCompatibility = JavaVersion.VERSION_19
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview"
+}
+
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
+}
