@@ -24,26 +24,27 @@ dependencies {
     implementation "com.typesafe.akka:akka-serialization-jackson_${versions.ScalaBinary}"
     implementation "com.lightbend.akka.management:akka-management-cluster-http_${versions.ScalaBinary}"
     implementation "com.lightbend.akka.management:akka-management-cluster-bootstrap_${versions.ScalaBinary}"
-
-
     implementation "com.typesafe.akka:akka-persistence-typed_${versions.ScalaBinary}"
     implementation "com.typesafe.akka:akka-persistence-query_${versions.ScalaBinary}"
     implementation "com.lightbend.akka:akka-persistence-jdbc_${versions.ScalaBinary}"
     implementation "com.lightbend.akka:akka-projection-core_${versions.ScalaBinary}"
     implementation "com.lightbend.akka:akka-projection-eventsourced_${versions.ScalaBinary}"
     implementation "com.lightbend.akka:akka-projection-jdbc_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-http_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-http-jackson_${versions.ScalaBinary}"
 
     implementation 'org.postgresql:postgresql:42.2.18'
 
-    implementation "com.typesafe.akka:akka-http_${versions.ScalaBinary}"
-    implementation "com.typesafe.akka:akka-http-jackson_${versions.ScalaBinary}"
+    implementation "org.springframework:spring-context-support:6.0.7"
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+
 
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     testImplementation "com.typesafe.akka:akka-actor-testkit-typed_${versions.ScalaBinary}"
     testImplementation 'junit:junit:4.13.1'
 }
 
-mainClassName = "de.openvalue.resilience.Main"
+mainClassName = "de.openvalue.resilience.ResilienceSampleApplication"
 
 run {
     standardInput = System.in

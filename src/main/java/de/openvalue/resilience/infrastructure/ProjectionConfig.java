@@ -14,6 +14,10 @@ import akka.projection.jdbc.javadsl.JdbcProjection;
 import de.openvalue.resilience.application.InvoiceProcessor;
 import de.openvalue.resilience.domain.Order;
 import de.openvalue.resilience.domain.OrderEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import java.util.Properties;
 
 public class ProjectionConfig {
 
@@ -28,7 +32,7 @@ public class ProjectionConfig {
                 ProjectionId.of(InvoiceProcessor.class.getName(), OrderEntity.TAG),
                 sourceProvider,
                 () -> new PlainJdbcSession(),
-                InvoiceProcessor::new,
+                () -> new InvoiceProcessor(javaMailSender()),
                 system);
 
         // Make sure that projection runs only once
@@ -36,5 +40,19 @@ public class ProjectionConfig {
                 .init(SingletonActor
                         .of(ProjectionBehavior.create(projection), projection.projectionId().id())
                         .withStopMessage(ProjectionBehavior.stopMessage()));
+    }
+
+    private static JavaMailSender javaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+        mailSender.setUsername("");
+        mailSender.setPassword("");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        return mailSender;
     }
 }

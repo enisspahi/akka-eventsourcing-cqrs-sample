@@ -11,10 +11,10 @@ import de.openvalue.resilience.infrastructure.ProjectionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main {
-  private static final Logger logger = LoggerFactory.getLogger(Main.class);
+public class ResilienceSampleApplication {
+  private static final Logger logger = LoggerFactory.getLogger(ResilienceSampleApplication.class);
   public static void main(String[] args) {
-    var system = ActorSystem.create(Behaviors.empty(), "AsyncEventDemo");
+    var system = ActorSystem.create(Behaviors.empty(), "ResilienceSampleApplication");
 
     try {
       init(system);
