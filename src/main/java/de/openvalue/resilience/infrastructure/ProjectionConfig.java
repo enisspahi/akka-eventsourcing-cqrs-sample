@@ -11,6 +11,7 @@ import akka.projection.eventsourced.EventEnvelope;
 import akka.projection.eventsourced.javadsl.EventSourcedProvider;
 import akka.projection.javadsl.SourceProvider;
 import akka.projection.jdbc.javadsl.JdbcProjection;
+import com.typesafe.config.Config;
 import de.openvalue.resilience.application.InvoiceProcessor;
 import de.openvalue.resilience.domain.Order;
 import de.openvalue.resilience.domain.OrderEntity;
@@ -28,11 +29,13 @@ public class ProjectionConfig {
                         JdbcReadJournal.Identifier(),
                         OrderEntity.TAG);
 
+        var mailSender = initializeMailSender(system);
+
         var projection = JdbcProjection.exactlyOnce(
                 ProjectionId.of(InvoiceProcessor.class.getName(), OrderEntity.TAG),
                 sourceProvider,
                 () -> new PlainJdbcSession(),
-                () -> new InvoiceProcessor(javaMailSender()),
+                () -> new InvoiceProcessor(mailSender),
                 system);
 
         // Make sure that projection runs only once
@@ -42,12 +45,14 @@ public class ProjectionConfig {
                         .withStopMessage(ProjectionBehavior.stopMessage()));
     }
 
-    private static JavaMailSender javaMailSender() {
+    private static JavaMailSender initializeMailSender(ActorSystem<?> system) {
+        Config config = system.settings().config();
+
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername("");
-        mailSender.setPassword("");
+        mailSender.setUsername(config.getString("invoice-processor.smtp-username"));
+        mailSender.setPassword(config.getString("invoice-processor.smtp-password"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

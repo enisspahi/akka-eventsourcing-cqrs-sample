@@ -12,11 +12,15 @@ import akka.persistence.typed.javadsl.EventSourcedBehavior;
 import de.openvalue.resilience.domain.Order.Command;
 import de.openvalue.resilience.domain.Order.Event;
 import de.openvalue.resilience.domain.Order.State;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Set;
 
 public final class OrderEntity extends EventSourcedBehavior<Command, Event, State> {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderEntity.class);
 
     private final String id;
 
@@ -44,6 +48,7 @@ public final class OrderEntity extends EventSourcedBehavior<Command, Event, Stat
     }
 
     private Effect<Event, State> onProcessOrder(Command.ProcessOrder command) {
+        logger.info("Handling command {}", command);
         return Effect()
                 .persist(Event.OrderReceived.from(command))
                 .thenReply(command.replyTo(), state -> StatusReply.success(state));
